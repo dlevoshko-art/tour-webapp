@@ -26,38 +26,38 @@
     }
 
     h2 {
-      font-size: 20px;
-      margin: 0 0 16px 0;
+      font-size: 18px;
+      margin: 0 0 14px 0;
       text-align: center;
       font-weight: 700;
     }
 
     .form-group {
       background: var(--card-bg);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
       border: 1px solid var(--border-color);
     }
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--hint-color);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       letter-spacing: 0.5px;
     }
 
     input, select {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
+      padding: 10px;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
       background-color: var(--bg-color);
       color: var(--text-color);
-      font-size: 15px;
+      font-size: 14px;
       box-sizing: border-box;
       outline: none;
     }
@@ -79,28 +79,26 @@
     }
 
     .checkbox-group input {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       accent-color: var(--button-bg);
     }
 
     .submit-btn {
       width: 100%;
       padding: 14px;
-      background-color: var(--button-bg);
-      color: var(--button-text);
+      background-color: #ff6b35;
+      color: #ffffff;
       font-size: 16px;
       font-weight: 700;
       border: none;
       border-radius: 12px;
       cursor: pointer;
       margin-top: 10px;
-      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
     }
 
     .submit-btn:active {
       opacity: 0.85;
-      transform: scale(0.99);
     }
   </style>
 </head>
@@ -109,7 +107,6 @@
   <h2>🔍 Параметры тура (TourVisor)</h2>
 
   <form id="tourForm">
-    <!-- Направление -->
     <div class="form-group">
       <label>Курорт / Страна</label>
       <select id="country">
@@ -122,7 +119,6 @@
       </select>
     </div>
 
-    <!-- Даты вылета -->
     <div class="form-group">
       <label>Даты вылета</label>
       <div class="row">
@@ -135,15 +131,14 @@
       </div>
     </div>
 
-    <!-- Ночей и Туристов -->
     <div class="form-group">
       <div class="row">
         <div>
           <label>Ночей</label>
           <select id="nights">
-            <option value="6-8" selected>7 ночей (6-8)</option>
-            <option value="9-11">10 ночей (9-11)</option>
-            <option value="12-14">14 ночей (12-14)</option>
+            <option value="7" selected>7 ночей (6-8)</option>
+            <option value="10">10 ночей (9-11)</option>
+            <option value="14">14 ночей (12-14)</option>
           </select>
         </div>
         <div>
@@ -157,36 +152,32 @@
       </div>
     </div>
 
-    <!-- Бюджет (Диапазон цен) -->
     <div class="form-group">
       <label>Бюджет (₽)</label>
       <div class="row">
         <div>
-          <input type="number" id="priceMin" placeholder="От (100 000)" value="100000" step="5000">
+          <input type="number" id="priceMin" value="100000" step="5000">
         </div>
         <div>
-          <input type="number" id="priceMax" placeholder="До (250 000)" value="200000" step="5000">
+          <input type="number" id="priceMax" value="200000" step="5000">
         </div>
       </div>
     </div>
 
-    <!-- Питание -->
     <div class="form-group">
       <label>Тип питания</label>
       <select id="meal">
-        <option value="AI_UAI" selected>Все включено (AI / UAI)</option>
-        <option value="FB">Полный пансион (FB)</option>
-        <option value="HB">Завтрак и ужин (HB)</option>
-        <option value="BB">Только завтрак (BB)</option>
-        <option value="RO">Без питания (RO)</option>
+        <option value="Все включено (AI/UAI)" selected>Все включено (AI / UAI)</option>
+        <option value="Полный пансион (FB)">Полный пансион (FB)</option>
+        <option value="Завтрак и ужин (HB)">Завтрак и ужин (HB)</option>
+        <option value="Только завтрак (BB)">Только завтрак (BB)</option>
       </select>
     </div>
 
-    <!-- Перелет -->
     <div class="form-group">
       <label class="checkbox-group">
         <input type="checkbox" id="directFlight" checked>
-        <span>Только прямой перелет (без пересадок)</span>
+        <span>Только прямой перелет</span>
       </label>
     </div>
 
@@ -198,14 +189,13 @@
     tg.ready();
     tg.expand();
 
-    // Автоматическая подстановка дефолтных дат (+7 дней и +14 дней)
     const now = new Date();
     const dFrom = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const dTo = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
     document.getElementById('dateFrom').value = dFrom.toISOString().split('T')[0];
     document.getElementById('dateTo').value = dTo.toISOString().split('T')[0];
 
-    document.getElementById('sendBtn').addEventListener('click', () => {
+    function sendTourData() {
       const payload = {
         country: document.getElementById('country').value,
         date_from: document.getElementById('dateFrom').value,
@@ -213,14 +203,25 @@
         nights: document.getElementById('nights').value,
         adults: parseInt(document.getElementById('adults').value, 10),
         price_min: parseFloat(document.getElementById('priceMin').value) || 0,
-        price_max: parseFloat(document.getElementById('priceMax').value) || 0,
+        price_max: parseFloat(document.getElementById('priceMax').value) || 200000,
         meal: document.getElementById('meal').value,
         direct_only: document.getElementById('directFlight').checked
       };
 
-      // Передаем собранные данные в Telegram-бота
-      tg.sendData(JSON.stringify(payload));
-    });
+      try {
+        tg.sendData(JSON.stringify(payload));
+      } catch (e) {
+        console.error("sendData error:", e);
+      }
+      tg.close();
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', sendTourData);
+
+    // Нативная нижняя кнопка Telegram
+    tg.MainButton.setText("Найти на TourVisor");
+    tg.MainButton.show();
+    tg.MainButton.onClick(sendTourData);
   </script>
 </body>
 </html>
